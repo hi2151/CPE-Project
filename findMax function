@@ -1,9 +1,10 @@
-double findMax (double arr[], int size){
+double findMax (double myArray[], int SIZE)
+{
     double peakVal = 0;
     
-    for (int i = 0; i < size; i++){
-        if (arr[i] > peakVal){
-            peakVal = arr[i];
+    for (int i = 0; i < SIZE; i++){
+        if (myArray[i] > peakVal){
+            peakVal = myArray[i];
         }
     }
     
