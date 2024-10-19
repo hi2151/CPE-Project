@@ -1,20 +1,34 @@
-//Please upload all code into this file (I can sort things out but lets keep it all here for our reference <3)
 
 #include <Adafruit_CircuitPlayground.h> 
 
 int SensorPin=A0;
-const int SIZE=10; // will 10 readings be a good enough sample size or should we increase sample size?
-double myArray[SIZE]; // what should we name the array? :\
+const int SIZE=10; // 10 readings over 5 seconds
+double myArray[SIZE]; // temporary name for our data array
 
-void setup() {
+void setup() 
+{
   Serial.begin(9600);    
   pinMode(SensorPin,INPUT);
 }
 
 void loop() {
-  for (int i=0; i <SIZE; i++) { // Is it okay to put the for loop here or should I put it in void setup()? 
+  for (int i=0; i <SIZE; i++) 
+  { 
     myArray[i] = digitalRead(SensorPin);     
-    delay (5000);
-  }
-  while (true); 
+    delay (500);
+  } 
+  Serial.print(findMax (myArray[], SIZE));
+}
+
+double findMax (double myArray[], int SIZE)
+{
+    double peakVal = 0;
+    
+    for (int i = 0; i < SIZE; i++){
+        if (myArray[i] > peakVal){
+            peakVal = myArray[i];
+        }
+    }
+    
+    return peakVal;
 }
