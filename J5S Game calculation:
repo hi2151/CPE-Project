@@ -1,1 +1,77 @@
+let r = 50;
+let vel = 0;
+let xPos = r / 2;
+let eegValues = [];
+const MAX_EEG_VALUES = 125; 
+let alphaPower = 0;
+let fft;
+
+function setup() {
+    createCanvas(960, 580);
+    textSize(18);
+    fft = new p5.FFT();
+}
+
+function draw() {
+    background(220);
+
+    if (!serialActive) {
+        text("Press Space Bar to select Serial Port", 20, 30);
+    }
+    else {
+        text("Connected", 20, 30);
+        text('Velocity = ' + vel.toFixed(2), 20, 50);
+        text('Alpha Power = ' + alphaPower.toFixed(2), 20, 70);
+    }
+
+    xPos += vel;
+    if (xPos > width + r / 2) xPos = -r / 2;
+    if (xPos < -r / 2) xPos = width + r / 2;
+
+    ellipse(xPos, height / 2, r);
+}
+
+function keyPressed() {
+    if (key == " ") {
+        setUpSerial(); 
+    }
+}
+
+function readSerial(data) {
+    if (data != null) {
+        let fromArduino = parseFloat(data);
+
+        eegValues.push(fromArduino);
+        if (eegValues.length > MAX_EEG_VALUES) {
+            eegValues.shift();
+        }
+
+        if (eegValues.length == MAX_EEG_VALUES) {
+            computePSD(); 
+            vel = map(alphaPower, 0, 100, 0, 5); 
+        }
+    }
+}
+
+function computePSD() {
+    fft.analyze(eegValues);
+    let spectrum = fft.spectrum();
+    alphaPower = calculateAlphaPower(spectrum);
+}
+
+function calculateAlphaPower(spectrum) {
+    let samplingRate = 125; 
+    let binWidth = samplingRate / (2 * spectrum.length);
+
+    let alphaLowBin = Math.floor(8 / binWidth);
+    let alphaHighBin = Math.ceil(13 / binWidth);
+
+    let sum = 0;
+    for (let i = alphaLowBin; i <= alphaHighBin; i++) {
+        sum += spectrum[i];
+    }
+
+    return sum;
+}
+
 
