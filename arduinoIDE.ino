@@ -35,7 +35,7 @@ void loop() {
         imagPart -= sensorData[n] * sin(angle);
       }
 
-     // If the calculated frequency is within the alpha band (8-13 Hz), compute the magnitude
+    // Step 3: Alpha Band extraction and computing magnitude of the frequencies that lie within the alpha band (8-13 Hz)
     if (frequency >= ALPHA_LOW && frequency <= ALPHA_HIGH) {
       double magnitude = sqrt(realPart * realPart + imagPart * imagPart) / SAMPLES;
 
