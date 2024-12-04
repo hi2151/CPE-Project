@@ -14,16 +14,9 @@ void setup() {
 
 void loop() {
   // Step 1: Collect samples
-  Serial.println("Raw Readings:");
   for (int i = 0; i < SAMPLES; i++) {
     int rawValue = analogRead(sensorPin); // Read raw sensor value
     sensorData[i] = rawValue;
-
-    // Print raw reading
-    Serial.print("Sample ");
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.println(rawValue);
 
     delayMicroseconds(1000000 / SAMPLING_FREQUENCY); // Delay to maintain the sampling rate
   }
@@ -32,11 +25,8 @@ void loop() {
   Serial.println("\nAlpha Band (8-13 Hz):");
   for (int k = 0; k < SAMPLES / 2; k++) {
     double frequency = k * (SAMPLING_FREQUENCY / (double)SAMPLES); // Calculate frequency bin
-
-    // Focus only on the alpha band frequencies
-    if (frequency >= ALPHA_LOW && frequency <= ALPHA_HIGH) {
-      double realPart = 0;
-      double imagPart = 0;
+    double realPart = 0;
+    double imagPart = 0;
 
       // DFT calculation for each frequency
       for (int n = 0; n < SAMPLES; n++) {
@@ -45,13 +35,11 @@ void loop() {
         imagPart -= sensorData[n] * sin(angle);
       }
 
-      // Magnitude of the frequency component
+    if (frequency >= ALPHA_LOW && frequency <= ALPHA_HIGH) {
       double magnitude = sqrt(realPart * realPart + imagPart * imagPart) / SAMPLES;
 
+
       // Print results
-      Serial.print("Frequency: ");
-      Serial.print(frequency);
-      Serial.print(" Hz, Magnitude: ");
       Serial.println(magnitude);
     }
   }
