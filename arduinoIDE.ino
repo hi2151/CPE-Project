@@ -22,7 +22,7 @@ void loop() {
   }
 
   // Step 2: Perform DFT for alpha band (8-13 Hz)
-  Serial.println("\nAlpha Band (8-13 Hz):");
+  // Calculate the frequency corresponding to the current frequency bin (k)
   for (int k = 0; k < SAMPLES / 2; k++) {
     double frequency = k * (SAMPLING_FREQUENCY / (double)SAMPLES); // Calculate frequency bin
     double realPart = 0;
@@ -35,6 +35,7 @@ void loop() {
         imagPart -= sensorData[n] * sin(angle);
       }
 
+     // If the calculated frequency is within the alpha band (8-13 Hz), compute the magnitude
     if (frequency >= ALPHA_LOW && frequency <= ALPHA_HIGH) {
       double magnitude = sqrt(realPart * realPart + imagPart * imagPart) / SAMPLES;
 
